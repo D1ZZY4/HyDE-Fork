@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 scrDir=$(dirname "$(realpath "$0")")
 gpuinfo_file="/tmp/hyde-$UID-gpuinfo"
-AQ_DRM_DEVICES="${AQ_DRM_DEVICES:-WLR_DRM_DEVICES}"
+AQ_DRM_DEVICES="${AQ_DRM_DEVICES:-$WLR_DRM_DEVICES}"
 tired=false
 if [[ " $* " =~ " --tired " ]]; then
     if ! grep -q "tired" "$gpuinfo_file"; then
@@ -151,6 +151,7 @@ generate_json() {
     emoji=${icons:2}
     # Compute classes and percentage (5°C buckets for temp, 10% for util)
     local temp_val=${temperature%%.*}
+    : "${temp_val:=0}"
     ((temp_val < 0)) && temp_val=0
     ((temp_val > 999)) && temp_val=999
     local temp_bucket=$(((temp_val / 5) * 5))
@@ -217,8 +218,8 @@ general_query() {
         GPUINFO_PREV_STAT=$currStat
         GPUINFO_PREV_IDLE=$currIdle
         sed -i -e "/^GPUINFO_PREV_STAT=/c\GPUINFO_PREV_STAT=\"$currStat\"" -e "/^GPUINFO_PREV_IDLE=/c\GPUINFO_PREV_IDLE=\"$currIdle\"" "$gpuinfo_file" || {
-            echo "GPUINFO_PREV_STAT=\"$currStat\"" >>"$cpuinfo_file"
-            echo "GPUINFO_PREV_IDLE=\"$currIdle\"" >>"$cpuinfo_file"
+            echo "GPUINFO_PREV_STAT=\"$currStat\"" >>"$gpuinfo_file"
+            echo "GPUINFO_PREV_IDLE=\"$currIdle\"" >>"$gpuinfo_file"
         }
         awk -v stat="$diffStat" -v idle="$diffIdle" 'BEGIN {printf "%.1f", (stat/(stat+idle))*100}'
     }
