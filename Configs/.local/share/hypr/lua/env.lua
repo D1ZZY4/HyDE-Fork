@@ -2,7 +2,18 @@ hyde = hyde or {}
 hyde.env.finalize()
 hl.env("PATH", (hyde.env("PATH") or "") .. ":" .. hyde.path.lib)
 -- ? Isolate dconf
-hl.env("DCONF_PROFILE",  ((os.getenv("XDG_CONFIG_HOME") ~= "" and os.getenv("XDG_CONFIG_HOME")) or (os.getenv("HOME") or "" ) .. "/.config") .. "/dconf/profile/hyde_hyprland")
+local dconf_profile = ((os.getenv("XDG_CONFIG_HOME") ~= "" and os.getenv("XDG_CONFIG_HOME")) or (os.getenv("HOME") or "" ) .. "/.config") .. "/dconf/profile/hyde_hyprland"
+hl.env("DCONF_PROFILE", dconf_profile)
+-- Ensure the dconf profile file exists so gsettings can read theme settings.
+if not os.exists(dconf_profile) then
+	local profile_dir = dconf_profile:match("(.+)/[^/]+$")
+	os.execute("mkdir -p " .. profile_dir)
+	local fh = io.open(dconf_profile, "w")
+	if fh then
+		fh:write("user-db:user\n")
+		fh:close()
+	end
+end
 
 -- NVIDIA hook
 -- https://wiki.hypr.land/Nvidia/
