@@ -518,6 +518,10 @@ case "$1" in
 app)
     export PATH="${HYDE_SCRIPTS_PATH}:${PATH}"
     [[ "${HYDEPY}" -eq 1 ]] && python_activate
+    if ! source "${LIB_DIR}/hyde/globalcontrol.sh"; then
+        echo "Error: Could not load HyDE, broken installation?"
+        exit 1
+    fi
     shift
     exec app.sh "$@"
     ;;
