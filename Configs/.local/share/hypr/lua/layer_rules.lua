@@ -7,7 +7,6 @@ local layers =
   util.regex_compile(
   {
     namespace = {
-      "rofi",
       "notifications",
       "swaync-(notification-window|control-center)",
       "waybar",
