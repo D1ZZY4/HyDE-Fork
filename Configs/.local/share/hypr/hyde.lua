@@ -65,5 +65,7 @@ require("events")
 require("start_up")
 -- --* user now can have this file
 check_require("hyprland")
+-- --* external monitor configs from nwg-displays / Monique
+check_require("monitors")
 -- --* workflows configuration overrides everything
 check_require("lua_state.workflows")
