@@ -92,6 +92,7 @@ fn_envar_cache() {
 wallpaper_cache_commence() {
 	local mode=""
 	local option
+	local single_wallpaper=""
 
 	wallpaper_cache_bootstrap || return 1
 	wallpaper_cache_init || return 1
@@ -100,6 +101,7 @@ wallpaper_cache_commence() {
 	case "$1" in
 		w)
 			shift
+			single_wallpaper=1
 			;;
 		t)
 			shift
@@ -120,6 +122,7 @@ wallpaper_cache_commence() {
 					return 1
 				fi
 				cacheIn="$OPTARG"
+				single_wallpaper=1
 				;;
 			t)
 				cacheIn="$(dirname "$HYDE_THEME_DIR")/$OPTARG"
@@ -144,8 +147,12 @@ wallpaper_cache_commence() {
 	done
 
 	fn_envar_cache
-	wallPathArray=("$cacheIn")
-	wallPathArray+=("${WALLPAPER_CUSTOM_PATHS[@]}")
+	if [ -n "$single_wallpaper" ]; then
+		wallPathArray=("$cacheIn")
+	else
+		wallPathArray=("$cacheIn")
+		wallPathArray+=("${WALLPAPER_CUSTOM_PATHS[@]}")
+	fi
 	get_hashmap "${wallPathArray[@]}" --no-notify
 	parallel --bar --link "fn_wallcache$mode" ::: "${wallHash[@]}" ::: "${wallList[@]}"
 }
