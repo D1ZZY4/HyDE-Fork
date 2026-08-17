@@ -147,10 +147,8 @@ wallpaper_cache_commence() {
 	done
 
 	fn_envar_cache
-	if [ -n "$single_wallpaper" ]; then
-		wallPathArray=("$cacheIn")
-	else
-		wallPathArray=("$cacheIn")
+	wallPathArray=("$cacheIn")
+	if [ -z "$single_wallpaper" ]; then
 		wallPathArray+=("${WALLPAPER_CUSTOM_PATHS[@]}")
 	fi
 	get_hashmap "${wallPathArray[@]}" --no-notify
